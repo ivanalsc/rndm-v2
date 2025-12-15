@@ -1,8 +1,8 @@
 // src/app/(dashboard)/my-entries/page.tsx
 import { createClient } from '@/lib/supabase/server'
 import Image from 'next/image'
-import { deleteEntry } from '../../../app/actions/entries'
 import ShareImageGenerator from '@/components/ShareImageGenerator'
+import { deleteEntry } from '../../../app/actions/entries'
 
 export default async function MyEntriesPage() {
   const supabase = await createClient()
@@ -35,7 +35,18 @@ export default async function MyEntriesPage() {
               key={entry.id}
               className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
             >
-              {entry.cover_image_url ? (
+              {/* Mostrar imagen adicional si existe, sino mostrar cover */}
+              {entry.additional_image_url ? (
+                <div className="relative h-64 bg-gray-200">
+                  <Image
+                    src={entry.additional_image_url}
+                    alt={entry.title}
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+                </div>
+              ) : entry.cover_image_url ? (
                 <div className="relative h-64 bg-gray-200">
                   <Image
                     src={entry.cover_image_url}

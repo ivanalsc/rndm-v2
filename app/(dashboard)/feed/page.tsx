@@ -71,7 +71,18 @@ export default async function FeedPage() {
               key={entry.id}
               className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
             >
-              {entry.cover_image_url ? (
+              {/* Mostrar imagen adicional si existe, sino mostrar cover */}
+              {entry.additional_image_url ? (
+                <div className="relative h-64 bg-gray-200">
+                  <Image
+                    src={entry.additional_image_url}
+                    alt={entry.title}
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+                </div>
+              ) : entry.cover_image_url ? (
                 <div className="relative h-64 bg-gray-200">
                   <Image
                     src={entry.cover_image_url}

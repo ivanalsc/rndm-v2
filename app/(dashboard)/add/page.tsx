@@ -1,22 +1,37 @@
+// src/app/(dashboard)/add/page.tsx
 'use client'
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { createEntry } from '../../actions/entries'
+import AutocompleteInput from '@/components/AutocompleteInput'
+import { SearchResult } from '@/lib/api-search'
+import { createEntry } from '../../../app/actions/entries'
 
 export default function AddEntryPage() {
-  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [additionalImagePreview, setAdditionalImagePreview] = useState<string | null>(null)
+  const [selectedType, setSelectedType] = useState<string>('')
+  const [coverPreview, setCoverPreview] = useState<string | null>(null)
+  const [coverUrl, setCoverUrl] = useState('')
+  const [author, setAuthor] = useState('')
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAdditionalImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
       const reader = new FileReader()
       reader.onloadend = () => {
-        setImagePreview(reader.result as string)
+        setAdditionalImagePreview(reader.result as string)
       }
       reader.readAsDataURL(file)
     } else {
-      setImagePreview(null)
+      setAdditionalImagePreview(null)
+    }
+  }
+
+  const handleAutocompleteSelect = (result: SearchResult) => {
+    setAuthor(result.author_artist || '')
+    if (result.cover_image_url) {
+      setCoverUrl(result.cover_image_url)
+      setCoverPreview(result.cover_image_url)
     }
   }
 
@@ -33,12 +48,19 @@ export default function AddEntryPage() {
               htmlFor="type"
               className="block text-sm font-medium text-gray-700"
             >
-              Tipo de contenido
+              Tipo de contenido *
             </label>
             <select
               id="type"
               name="type"
               required
+              value={selectedType}
+              onChange={(e) => {
+                setSelectedType(e.target.value)
+                setCoverPreview(null)
+                setCoverUrl('')
+                setAuthor('')
+              }}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             >
               <option value="">Selecciona un tipo</option>
@@ -54,47 +76,50 @@ export default function AddEntryPage() {
               htmlFor="title"
               className="block text-sm font-medium text-gray-700"
             >
-              Título *
+              Título * {selectedType && <span className="text-xs text-gray-500">(empieza a escribir para buscar)</span>}
             </label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-              placeholder="Ej: La segunda venida de Hilda Bustamante"
+            <AutocompleteInput
+              type={selectedType}
+              onSelect={handleAutocompleteSelect}
             />
           </div>
 
-          <div>
-            <label
-              htmlFor="author_artist"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Autor/Artista
-            </label>
-            <input
-              type="text"
-              id="author_artist"
-              name="author_artist"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-              placeholder="Ej: Salomé Esper"
-            />
-          </div>
+          {/* Campo oculto para el autor/artista */}
+          <input type="hidden" name="author_artist" value={author} />
 
+          {/* Portada autocompletada */}
+          {coverPreview && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Portada {author && <span className="text-gray-600">· {author}</span>}
+              </label>
+              <div className="relative h-64 w-48 mx-auto border rounded-lg overflow-hidden">
+                <Image
+                  src={coverPreview}
+                  alt="Portada"
+                  fill
+                  className="object-cover"
+                  unoptimized
+                />
+              </div>
+              <input type="hidden" name="cover_image_url" value={coverUrl} />
+            </div>
+          )}
+
+          {/* Imagen adicional opcional */}
           <div>
-            <label
-              htmlFor="cover_image"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Imagen de portada
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Imagen adicional (opcional)
             </label>
+            <p className="text-xs text-gray-500 mb-2">
+              Puedes agregar una foto tuya con el libro/álbum, una captura de pantalla, etc.
+            </p>
             <input
               type="file"
-              id="cover_image"
-              name="cover_image"
+              id="additional_image"
+              name="additional_image"
               accept="image/*"
-              onChange={handleImageChange}
+              onChange={handleAdditionalImageChange}
               className="mt-1 block w-full text-sm text-gray-500
                 file:mr-4 file:py-2 file:px-4
                 file:rounded-md file:border-0
@@ -102,11 +127,11 @@ export default function AddEntryPage() {
                 file:bg-indigo-50 file:text-indigo-700
                 hover:file:bg-indigo-100"
             />
-            {imagePreview && (
+            {additionalImagePreview && (
               <div className="mt-4 relative h-64 w-full">
                 <Image
-                  src={imagePreview}
-                  alt="Preview"
+                  src={additionalImagePreview}
+                  alt="Vista previa"
                   fill
                   className="object-contain rounded-md"
                 />
