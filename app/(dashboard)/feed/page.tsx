@@ -36,14 +36,24 @@ export default async function FeedPage() {
               key={entry.id}
               className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
             >
-              {entry.cover_image_url && (
+              {entry.cover_image_url ? (
                 <div className="relative h-64 bg-gray-200">
                   <Image
                     src={entry.cover_image_url}
                     alt={entry.title}
                     fill
                     className="object-cover"
+                    unoptimized
                   />
+                </div>
+              ) : (
+                <div className="h-64 bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
+                  <span className="text-6xl">
+                    {entry.type === 'book' && '📚'}
+                    {entry.type === 'music' && '🎵'}
+                    {entry.type === 'movie' && '🎬'}
+                    {entry.type === 'series' && '📺'}
+                  </span>
                 </div>
               )}
               <div className="p-4">

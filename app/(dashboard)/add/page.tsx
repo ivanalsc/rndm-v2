@@ -1,6 +1,25 @@
-import { createEntry } from "../../actions/entries";
+'use client'
+
+import { useState } from 'react'
+import Image from 'next/image'
+import { createEntry } from '../../actions/entries'
 
 export default function AddEntryPage() {
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    } else {
+      setImagePreview(null)
+    }
+  }
+
   return (
     <div className="px-4">
       <div className="max-w-2xl mx-auto">
@@ -65,21 +84,34 @@ export default function AddEntryPage() {
 
           <div>
             <label
-              htmlFor="cover_image_url"
+              htmlFor="cover_image"
               className="block text-sm font-medium text-gray-700"
             >
-              URL de la imagen
+              Imagen de portada
             </label>
             <input
-              type="url"
-              id="cover_image_url"
-              name="cover_image_url"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-              placeholder="https://ejemplo.com/imagen.jpg"
+              type="file"
+              id="cover_image"
+              name="cover_image"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="mt-1 block w-full text-sm text-gray-500
+                file:mr-4 file:py-2 file:px-4
+                file:rounded-md file:border-0
+                file:text-sm file:font-semibold
+                file:bg-indigo-50 file:text-indigo-700
+                hover:file:bg-indigo-100"
             />
-            <p className="mt-1 text-sm text-gray-500">
-              Por ahora solo URLs. Más adelante agregaremos carga de archivos.
-            </p>
+            {imagePreview && (
+              <div className="mt-4 relative h-64 w-full">
+                <Image
+                  src={imagePreview}
+                  alt="Preview"
+                  fill
+                  className="object-contain rounded-md"
+                />
+              </div>
+            )}
           </div>
 
           <div>

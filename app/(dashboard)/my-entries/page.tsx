@@ -1,7 +1,8 @@
 // src/app/(dashboard)/my-entries/page.tsx
 import { createClient } from '@/lib/supabase/server'
 import Image from 'next/image'
-import { deleteEntry } from '../../actions/entries'
+import { deleteEntry } from '../../../app/actions/entries'
+import ShareImageGenerator from '@/components/ShareImageGenerator'
 
 export default async function MyEntriesPage() {
   const supabase = await createClient()
@@ -34,14 +35,24 @@ export default async function MyEntriesPage() {
               key={entry.id}
               className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
             >
-              {entry.cover_image_url && (
+              {entry.cover_image_url ? (
                 <div className="relative h-64 bg-gray-200">
                   <Image
                     src={entry.cover_image_url}
                     alt={entry.title}
                     fill
                     className="object-cover"
+                    unoptimized
                   />
+                </div>
+              ) : (
+                <div className="h-64 bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
+                  <span className="text-6xl">
+                    {entry.type === 'book' && '📚'}
+                    {entry.type === 'music' && '🎵'}
+                    {entry.type === 'movie' && '🎬'}
+                    {entry.type === 'series' && '📺'}
+                  </span>
                 </div>
               )}
               <div className="p-4">
@@ -79,6 +90,7 @@ export default async function MyEntriesPage() {
                   </p>
                 )}
                 <div className="flex gap-2 pt-3 border-t">
+                  <ShareImageGenerator entry={entry} />
                   <form action={deleteEntry.bind(null, entry.id)} className="flex-1">
                     <button
                       type="submit"
