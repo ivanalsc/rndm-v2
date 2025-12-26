@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useTransition } from 'react'
 import { toggleLike } from '../../app/actions/interactions'
+import { useState, useTransition } from 'react'
 
 interface LikeButtonProps {
   entryId: string
@@ -15,7 +15,6 @@ export default function LikeButton({ entryId, initialLiked, initialCount }: Like
   const [isPending, startTransition] = useTransition()
 
   const handleLike = () => {
-    // Optimistic update
     setLiked(!liked)
     setCount(liked ? count - 1 : count + 1)
 
@@ -28,12 +27,25 @@ export default function LikeButton({ entryId, initialLiked, initialCount }: Like
     <button
       onClick={handleLike}
       disabled={isPending}
-      className="flex items-center gap-1 text-sm hover:scale-110 transition-transform disabled:opacity-50"
+      className="flex items-center gap-1.5 text-xs transition-all disabled:opacity-50 group"
     >
-      <span className={liked ? 'text-red-500' : 'text-gray-400'}>
-        {liked ? '❤️' : '🤍'}
-      </span>
-      <span className={liked ? 'text-red-500' : 'text-gray-500'}>
+      <svg 
+        width="16" 
+        height="16" 
+        viewBox="0 0 16 16" 
+        fill="none" 
+        className={`transition-all duration-300 ${
+          liked 
+            ? 'fill-black scale-110' 
+            : 'stroke-gray-400 group-hover:stroke-black group-hover:scale-110'
+        }`}
+        strokeWidth="1.5"
+      >
+        <path d="M8 14s-6-4-6-8c0-2 1.5-3 3-3 1.5 0 3 1 3 3 0-2 1.5-3 3-3 1.5 0 3 1 3 3 0 4-6 8-6 8z" />
+      </svg>
+      <span className={`font-medium transition-colors ${
+        liked ? 'text-black' : 'text-gray-400 group-hover:text-black'
+      }`}>
         {count}
       </span>
     </button>

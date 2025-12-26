@@ -16,39 +16,37 @@ export async function createEntry(formData: FormData) {
     redirect('/login')
   }
 
-  // Manejar la carga de imagen (URL o archivo)
-  let coverImageUrl = formData.get('cover_image_url') as string || null
-  const coverImage = formData.get('cover_image') as File
+  // Manejar la carga de cover (URL de la API)
+  const coverImageUrl = formData.get('cover_image_url') as string || null
   
-  // Si hay un archivo, subirlo (tiene prioridad sobre URL)
-  if (coverImage && coverImage.size > 0) {
-    const fileExt = coverImage.name.split('.').pop()
-    const fileName = `${user.id}-${Date.now()}.${fileExt}`
-    const filePath = `${fileName}`
+  // Manejar imagen adicional (archivo subido)
+  let additionalImageUrl = null
+  const additionalImage = formData.get('additional_image') as File
+
+  if (additionalImage && additionalImage.size > 0) {
+    const fileExt = additionalImage.name.split('.').pop()
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
 
     const { error: uploadError } = await supabase.storage
       .from('covers')
-      .upload(filePath, coverImage, {
+      .upload(fileName, additionalImage, {
         cacheControl: '3600',
         upsert: false
       })
 
     if (uploadError) {
-      console.error('Error uploading image:', uploadError)
-      throw new Error('Error al subir la imagen')
+      console.error('Error uploading additional image:', uploadError)
+      return { error: `Error al subir la imagen adicional: ${uploadError.message}` }
     }
 
-    // Obtener la URL pública
     const { data: { publicUrl } } = supabase.storage
       .from('covers')
-      .getPublicUrl(filePath)
+      .getPublicUrl(fileName)
     
-    coverImageUrl = publicUrl
+    additionalImageUrl = publicUrl
   }
 
   const rating = formData.get('rating')
-  const additionalImageUrl =
-    (formData.get('additional_image_url') as string) || null
 
   const data = {
     user_id: user.id,
@@ -66,7 +64,7 @@ export async function createEntry(formData: FormData) {
 
   if (error) {
     console.error('Error creating entry:', error)
-    throw new Error(error.message)
+    return { error: error.message }
   }
 
   revalidatePath('/feed')
@@ -122,7 +120,7 @@ export async function deleteEntry(entryId: string) {
 
   if (error) {
     console.error('Error deleting entry:', error)
-    throw new Error(error.message)
+    return { error: error.message }
   }
 
   revalidatePath('/feed')

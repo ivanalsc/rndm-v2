@@ -1,8 +1,7 @@
-// src/app/(dashboard)/my-entries/page.tsx
 import { createClient } from '@/lib/supabase/server'
 import Image from 'next/image'
 import ShareImageGenerator from '@/components/ShareImageGenerator'
-import { deleteEntry } from '../../../app/actions/entries'
+import DeleteEntryButton from '@/components/DeleteEntryButton'
 
 export default async function MyEntriesPage() {
   const supabase = await createClient()
@@ -18,101 +17,93 @@ export default async function MyEntriesPage() {
     .order('created_at', { ascending: false })
 
   return (
-    <div className="px-4">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Mis entradas</h1>
+    <div>
+      <h1 className="text-4xl font-bold font-grotesk text-black mb-12 tracking-tight">
+        My Collection
+      </h1>
       
       {!entries || entries.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-gray-500">No tenés entradas todavía.</p>
-          <p className="text-sm text-gray-400 mt-2">
-            ¡Empezá agregando tu primera entrada!
-          </p>
+        <div className="text-center py-24">
+          <p className="text-gray-400 text-sm mb-2">Your collection is empty</p>
+          <p className="text-gray-300 text-xs">Start by adding your first entry</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {entries.map((entry) => (
-            <div
+            <article
               key={entry.id}
-              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+              className="group"
             >
-              {/* Mostrar imagen adicional si existe, sino mostrar cover */}
-              {entry.additional_image_url ? (
-                <div className="relative h-64 bg-gray-200">
+              {/* Imagen principal solo si existe */}
+              {entry.additional_image_url && (
+                <div className="relative aspect-square bg-gray-100 mb-4 overflow-hidden">
                   <Image
                     src={entry.additional_image_url}
                     alt={entry.title}
                     fill
-                    className="object-cover"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
                     unoptimized
                   />
-                </div>
-              ) : entry.cover_image_url ? (
-                <div className="relative h-64 bg-gray-200">
-                  <Image
-                    src={entry.cover_image_url}
-                    alt={entry.title}
-                    fill
-                    className="object-cover"
-                    unoptimized
-                  />
-                </div>
-              ) : (
-                <div className="h-64 bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
-                  <span className="text-6xl">
-                    {entry.type === 'book' && '📚'}
-                    {entry.type === 'music' && '🎵'}
-                    {entry.type === 'movie' && '🎬'}
-                    {entry.type === 'series' && '📺'}
-                  </span>
                 </div>
               )}
-              <div className="p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-semibold text-indigo-600 uppercase">
-                    {entry.type === 'book' && '📚 Libro'}
-                    {entry.type === 'music' && '🎵 Música'}
-                    {entry.type === 'movie' && '🎬 Película'}
-                    {entry.type === 'series' && '📺 Serie'}
-                  </span>
-                  <div className="flex items-center gap-2">
+              
+              {/* Contenido */}
+              <div className="space-y-3">
+                {/* Header con cover thumbnail y rating */}
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex gap-3 flex-1 min-w-0">
+                    {entry.cover_image_url && (
+                      <div className="relative w-10 h-14 flex-shrink-0 bg-gray-100 overflow-hidden">
+                        <Image
+                          src={entry.cover_image_url}
+                          alt=""
+                          fill
+                          className="object-cover"
+                          unoptimized
+                        />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <h2 className="font-grotesk font-semibold text-black text-base leading-tight mb-1 line-clamp-2">
+                        {entry.title}
+                      </h2>
+                      {entry.author_artist && (
+                        <p className="text-sm text-gray-500 truncate">
+                          {entry.author_artist}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
                     {entry.rating && (
-                      <span className="text-sm text-yellow-500">
-                        {'⭐'.repeat(entry.rating)}
-                      </span>
+                      <div className="flex gap-0.5">
+                        {Array.from({ length: entry.rating }).map((_, i) => (
+                          <span key={i} className="text-black text-xs">★</span>
+                        ))}
+                      </div>
                     )}
                     {!entry.is_public && (
-                      <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">
-                        Privado
+                      <span className="text-xs text-gray-400 px-2 py-0.5 bg-gray-50 rounded">
+                        Private
                       </span>
                     )}
                   </div>
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-1">
-                  {entry.title}
-                </h3>
-                {entry.author_artist && (
-                  <p className="text-sm text-gray-600 mb-2">
-                    por {entry.author_artist}
-                  </p>
-                )}
+
+                {/* Descripción */}
                 {entry.description && (
-                  <p className="text-sm text-gray-700 mb-3 line-clamp-3">
+                  <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed">
                     {entry.description}
                   </p>
                 )}
-                <div className="flex gap-2 pt-3 border-t">
+
+                {/* Acciones */}
+                <div className="flex items-center gap-3 pt-3 border-t border-gray-100">
                   <ShareImageGenerator entry={entry} />
-                  <form action={deleteEntry.bind(null, entry.id)} className="flex-1">
-                    <button
-                      type="submit"
-                      className="w-full text-sm text-red-600 hover:text-red-800 py-2"
-                    >
-                      Eliminar
-                    </button>
-                  </form>
+                  <DeleteEntryButton entryId={entry.id} />
                 </div>
               </div>
-            </div>
+            </article>
           ))}
         </div>
       )}

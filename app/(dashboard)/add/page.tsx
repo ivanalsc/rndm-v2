@@ -5,7 +5,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import AutocompleteInput from '@/components/AutocompleteInput'
 import { SearchResult } from '@/lib/api-search'
-import { createEntry } from '../../../app/actions/entries'
+import { createEntry } from '../../actions/entries'
 
 export default function AddEntryPage() {
   const [additionalImagePreview, setAdditionalImagePreview] = useState<string | null>(null)
@@ -79,6 +79,7 @@ export default function AddEntryPage() {
               Título * {selectedType && <span className="text-xs text-gray-500">(empieza a escribir para buscar)</span>}
             </label>
             <AutocompleteInput
+              key={selectedType}
               type={selectedType}
               onSelect={handleAutocompleteSelect}
             />
