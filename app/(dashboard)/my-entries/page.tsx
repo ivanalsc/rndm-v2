@@ -1,4 +1,3 @@
-// src/app/(dashboard)/my-entries/page.tsx
 import { createClient } from '@/lib/supabase/server'
 import Image from 'next/image'
 import ShareImageGenerator from '@/components/ShareImageGenerator'
@@ -29,11 +28,11 @@ export default async function MyEntriesPage() {
           <p className="text-gray-300 text-xs">Start by adding your first entry</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
           {entries.map((entry) => (
             <article
               key={entry.id}
-              className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
+              className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 break-inside-avoid"
             >
               {/* Imagen principal solo si existe - estilo Instagram */}
               {entry.additional_image_url && (

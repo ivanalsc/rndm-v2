@@ -1,11 +1,11 @@
 // src/app/(dashboard)/add/page.tsx
 'use client'
 
+import { createEntry } from '../../actions/entries'
 import { useState } from 'react'
 import Image from 'next/image'
 import AutocompleteInput from '@/components/AutocompleteInput'
 import { SearchResult } from '@/lib/api-search'
-import { createEntry } from '../../actions/entries'
 
 export default function AddEntryPage() {
   const [additionalImagePreview, setAdditionalImagePreview] = useState<string | null>(null)
@@ -13,6 +13,10 @@ export default function AddEntryPage() {
   const [coverPreview, setCoverPreview] = useState<string | null>(null)
   const [coverUrl, setCoverUrl] = useState('')
   const [author, setAuthor] = useState('')
+
+  const handleSubmit = async (formData: FormData) => {
+    await createEntry(formData)
+  }
 
   const handleAdditionalImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -36,172 +40,162 @@ export default function AddEntryPage() {
   }
 
   return (
-    <div className="px-4">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">
-          Agregar nueva entrada
-        </h1>
+    <div className="max-w-2xl mx-auto">
+      <h1 className="text-4xl font-bold font-grotesk text-black mb-12 tracking-tight">
+        Add Entry
+      </h1>
 
-        <form action={createEntry} className="space-y-6">
-          <div>
-            <label
-              htmlFor="type"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Tipo de contenido *
+      <form action={handleSubmit} className="space-y-8">
+        {/* Tipo de contenido */}
+        <div>
+          <label htmlFor="type" className="block text-sm font-medium text-black mb-2">
+            Type
+          </label>
+          <select
+            id="type"
+            name="type"
+            required
+            value={selectedType}
+            onChange={(e) => {
+              setSelectedType(e.target.value)
+              setCoverPreview(null)
+              setCoverUrl('')
+              setAuthor('')
+            }}
+            className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-black focus:outline-none focus:ring-2 focus:ring-[#35553D] focus:border-transparent transition-all"
+          >
+            <option value="">Select type</option>
+            <option value="book">📚 Book</option>
+            <option value="music">🎵 Music</option>
+            <option value="movie">🎬 Movie</option>
+            <option value="series">📺 Series</option>
+          </select>
+        </div>
+
+        {/* Título con autocompletado */}
+        <div>
+          <label htmlFor="title" className="block text-sm font-medium text-black mb-2">
+            Title {selectedType && <span className="text-gray-400 text-xs font-normal ml-2">Start typing to search</span>}
+          </label>
+          <AutocompleteInput
+            key={selectedType}
+            type={selectedType}
+            onSelect={handleAutocompleteSelect}
+          />
+        </div>
+
+        {/* Campo oculto para el autor/artista */}
+        <input type="hidden" name="author_artist" value={author} />
+
+        {/* Portada autocompletada */}
+        {coverPreview && (
+          <div className="bg-white rounded-xl p-6 border border-gray-200">
+            <label className="block text-sm font-medium text-black mb-3">
+              Cover {author && <span className="text-gray-500 font-normal">· {author}</span>}
             </label>
-            <select
-              id="type"
-              name="type"
-              required
-              value={selectedType}
-              onChange={(e) => {
-                setSelectedType(e.target.value)
-                setCoverPreview(null)
-                setCoverUrl('')
-                setAuthor('')
-              }}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            >
-              <option value="">Selecciona un tipo</option>
-              <option value="book">📚 Libro</option>
-              <option value="music">🎵 Música</option>
-              <option value="movie">🎬 Película</option>
-              <option value="series">📺 Serie</option>
-            </select>
-          </div>
-
-          <div>
-            <label
-              htmlFor="title"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Título * {selectedType && <span className="text-xs text-gray-500">(empieza a escribir para buscar)</span>}
-            </label>
-            <AutocompleteInput
-              key={selectedType}
-              type={selectedType}
-              onSelect={handleAutocompleteSelect}
-            />
-          </div>
-
-          {/* Campo oculto para el autor/artista */}
-          <input type="hidden" name="author_artist" value={author} />
-
-          {/* Portada autocompletada */}
-          {coverPreview && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Portada {author && <span className="text-gray-600">· {author}</span>}
-              </label>
-              <div className="relative h-64 w-48 mx-auto border rounded-lg overflow-hidden">
-                <Image
-                  src={coverPreview}
-                  alt="Portada"
-                  fill
-                  className="object-cover"
-                  unoptimized
-                />
-              </div>
-              <input type="hidden" name="cover_image_url" value={coverUrl} />
+            <div className="relative h-48 w-32 mx-auto bg-gray-100 rounded-lg overflow-hidden">
+              <Image
+                src={coverPreview}
+                alt="Cover"
+                fill
+                className="object-cover"
+                unoptimized
+              />
             </div>
-          )}
+            <input type="hidden" name="cover_image_url" value={coverUrl} />
+          </div>
+        )}
 
-          {/* Imagen adicional opcional */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Imagen adicional (opcional)
-            </label>
-            <p className="text-xs text-gray-500 mb-2">
-              Puedes agregar una foto tuya con el libro/álbum, una captura de pantalla, etc.
-            </p>
+        {/* Imagen adicional opcional */}
+        <div>
+          <label className="block text-sm font-medium text-black mb-2">
+            Additional Image <span className="text-gray-400 text-xs font-normal">(optional)</span>
+          </label>
+          <p className="text-xs text-gray-500 mb-3">
+            Add a personal photo with the book/album, screenshot, etc.
+          </p>
+          <label className="block w-full cursor-pointer">
             <input
               type="file"
               id="additional_image"
               name="additional_image"
               accept="image/*"
               onChange={handleAdditionalImageChange}
-              className="mt-1 block w-full text-sm text-gray-500
-                file:mr-4 file:py-2 file:px-4
-                file:rounded-md file:border-0
-                file:text-sm file:font-semibold
-                file:bg-indigo-50 file:text-indigo-700
-                hover:file:bg-indigo-100"
+              className="hidden"
             />
-            {additionalImagePreview && (
-              <div className="mt-4 relative h-64 w-full">
-                <Image
-                  src={additionalImagePreview}
-                  alt="Vista previa"
-                  fill
-                  className="object-contain rounded-md"
-                />
-              </div>
-            )}
-          </div>
+            <div className="w-full px-4 py-8 bg-white border-2 border-dashed border-gray-200 rounded-xl hover:border-[#35553D] hover:bg-gray-50 transition-all text-center">
+              <svg className="w-8 h-8 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 4v16m8-8H4" />
+              </svg>
+              <span className="text-sm text-gray-500">Click to upload image</span>
+            </div>
+          </label>
+          {additionalImagePreview && (
+            <div className="mt-4 relative w-full aspect-square rounded-xl overflow-hidden bg-gray-100">
+              <Image
+                src={additionalImagePreview}
+                alt="Preview"
+                fill
+                className="object-cover"
+              />
+            </div>
+          )}
+        </div>
 
-          <div>
-            <label
-              htmlFor="description"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Descripción o comentario
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              rows={4}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-              placeholder="¿Qué te pareció?"
-            />
-          </div>
+        {/* Descripción */}
+        <div>
+          <label htmlFor="description" className="block text-sm font-medium text-black mb-2">
+            Thoughts <span className="text-gray-400 text-xs font-normal">(optional)</span>
+          </label>
+          <textarea
+            id="description"
+            name="description"
+            rows={4}
+            className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-black focus:outline-none focus:ring-2 focus:ring-[#35553D] focus:border-transparent transition-all resize-none"
+            placeholder="What did you think?"
+          />
+        </div>
 
-          <div>
-            <label
-              htmlFor="rating"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Calificación
-            </label>
-            <select
-              id="rating"
-              name="rating"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            >
-              <option value="">Sin calificación</option>
-              <option value="1">⭐ 1 estrella</option>
-              <option value="2">⭐⭐ 2 estrellas</option>
-              <option value="3">⭐⭐⭐ 3 estrellas</option>
-              <option value="4">⭐⭐⭐⭐ 4 estrellas</option>
-              <option value="5">⭐⭐⭐⭐⭐ 5 estrellas</option>
-            </select>
-          </div>
+        {/* Calificación */}
+        <div>
+          <label htmlFor="rating" className="block text-sm font-medium text-black mb-2">
+            Rating <span className="text-gray-400 text-xs font-normal">(optional)</span>
+          </label>
+          <select
+            id="rating"
+            name="rating"
+            className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-black focus:outline-none focus:ring-2 focus:ring-[#35553D] focus:border-transparent transition-all"
+          >
+            <option value="">No rating</option>
+            <option value="1">⬤ ○ ○ ○ ○</option>
+            <option value="2">⬤ ⬤ ○ ○ ○</option>
+            <option value="3">⬤ ⬤ ⬤ ○ ○</option>
+            <option value="4">⬤ ⬤ ⬤ ⬤ ○</option>
+            <option value="5">⬤ ⬤ ⬤ ⬤ ⬤</option>
+          </select>
+        </div>
 
-          <div className="flex items-center">
-            <input
-              id="is_public"
-              name="is_public"
-              type="checkbox"
-              className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-            />
-            <label
-              htmlFor="is_public"
-              className="ml-2 block text-sm text-gray-900"
-            >
-              Hacer pública (aparecerá en el feed)
-            </label>
-          </div>
+        {/* Público/Privado */}
+        <div className="flex items-center gap-3 p-4 bg-white rounded-xl border border-gray-200">
+          <input
+            id="is_public"
+            name="is_public"
+            type="checkbox"
+            className="w-5 h-5 text-[#35553D] bg-white border-gray-300 rounded focus:ring-2 focus:ring-[#35553D] transition-all"
+          />
+          <label htmlFor="is_public" className="text-sm font-medium text-black cursor-pointer">
+            Make public <span className="text-gray-500 font-normal">(will appear in feed)</span>
+          </label>
+        </div>
 
-          <div className="flex gap-4">
-            <button
-              type="submit"
-              className="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Guardar entrada
-            </button>
-          </div>
-        </form>
-      </div>
+        {/* Botón submit */}
+        <button
+          type="submit"
+          className="w-full bg-[#35553D] text-white px-6 py-4 rounded-xl font-medium hover:bg-[#2a4430] transition-all shadow-sm hover:shadow-md"
+        >
+          Save Entry
+        </button>
+      </form>
     </div>
   )
 }

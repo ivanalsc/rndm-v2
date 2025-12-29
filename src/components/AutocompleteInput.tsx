@@ -21,7 +21,6 @@ export default function AutocompleteInput({
   const [showResults, setShowResults] = useState(false)
   const wrapperRef = useRef<HTMLDivElement>(null)
 
-  // Cerrar dropdown al hacer click fuera
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
@@ -32,7 +31,6 @@ export default function AutocompleteInput({
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  // Buscar cuando el usuario escribe
   useEffect(() => {
     const delaySearch = setTimeout(async () => {
       if (query.length >= 2 && type) {
@@ -45,7 +43,7 @@ export default function AutocompleteInput({
         setResults([])
         setShowResults(false)
       }
-    }, 300) // Debounce de 300ms
+    }, 300) 
 
     return () => clearTimeout(delaySearch)
   }, [query, type])
@@ -66,8 +64,8 @@ export default function AutocompleteInput({
         type="text"
         name="title"
         disabled
-        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-500"
-        placeholder="Primero selecciona un tipo de contenido"
+        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-400"
+        placeholder="First select a content type"
       />
     )
   }
@@ -80,28 +78,28 @@ export default function AutocompleteInput({
         required
         value={query}
         onChange={handleChange}
-        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-        placeholder="Empieza a escribir para buscar..."
+        className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-black focus:outline-none focus:ring-2 focus:ring-[#35553D] focus:border-transparent transition-all"
+        placeholder="Start typing..."
         autoComplete="off"
       />
 
       {isLoading && (
-        <div className="absolute right-3 top-1/2 -translate-y-1/2">
-          <div className="animate-spin h-5 w-5 border-2 border-indigo-600 border-t-transparent rounded-full"></div>
+        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+          <div className="animate-spin h-4 w-4 border-2 border-[#35553D] border-t-transparent rounded-full"></div>
         </div>
       )}
 
       {showResults && results.length > 0 && (
-        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-96 overflow-y-auto">
+        <div className="absolute z-10 w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-lg max-h-96 overflow-y-auto">
           {results.map((result, index) => (
             <button
               key={index}
               type="button"
               onClick={() => handleSelect(result)}
-              className="w-full text-left px-3 py-3 hover:bg-gray-50 flex gap-3 items-start border-b last:border-b-0"
+              className="w-full text-left px-4 py-3 hover:bg-gray-50 flex gap-3 items-start border-b last:border-b-0 transition-colors"
             >
               {result.cover_image_url ? (
-                <div className="relative w-12 h-16 flex-shrink-0 bg-gray-200 rounded overflow-hidden">
+                <div className="relative w-10 h-14 flex-shrink-0 bg-gray-100 rounded overflow-hidden">
                   <Image
                     src={result.cover_image_url}
                     alt={result.title}
@@ -111,7 +109,7 @@ export default function AutocompleteInput({
                   />
                 </div>
               ) : (
-                <div className="w-12 h-16 flex-shrink-0 bg-gray-200 rounded flex items-center justify-center text-2xl">
+                <div className="w-10 h-14 flex-shrink-0 bg-gray-100 rounded flex items-center justify-center text-xl">
                   {type === 'book' && '📚'}
                   {type === 'music' && '🎵'}
                   {type === 'movie' && '🎬'}
@@ -119,16 +117,16 @@ export default function AutocompleteInput({
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-gray-900 truncate">
+                <p className="font-medium text-black truncate text-sm">
                   {result.title}
                 </p>
                 {result.author_artist && (
-                  <p className="text-sm text-gray-600 truncate">
+                  <p className="text-xs text-gray-500 truncate">
                     {result.author_artist}
                   </p>
                 )}
                 {result.year && (
-                  <p className="text-xs text-gray-500">{result.year}</p>
+                  <p className="text-xs text-gray-400">{result.year}</p>
                 )}
               </div>
             </button>
@@ -137,8 +135,8 @@ export default function AutocompleteInput({
       )}
 
       {showResults && results.length === 0 && !isLoading && query.length >= 2 && (
-        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg p-3 text-sm text-gray-500">
-          No se encontraron resultados. Puedes escribir manualmente.
+        <div className="absolute z-10 w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-lg p-4 text-sm text-gray-500">
+          No results found. You can type manually.
         </div>
       )}
     </div>
