@@ -6,10 +6,12 @@
 @layer base {
   :root {
     --font-grotesk: 'Space Grotesk', system-ui, sans-serif;
+    --color-bone: #FAF9F6;
+    --color-accent: #35553D;
   }
   
   body {
-    @apply antialiased;
+    @apply antialiased bg-[var(--color-bone)];
   }
 }
 

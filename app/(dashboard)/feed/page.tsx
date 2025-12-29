@@ -64,56 +64,59 @@ export default async function FeedPage() {
           <p className="text-gray-400 text-sm">No public entries yet</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="space-y-8 w-3xl m-auto">
           {entriesWithInteractions.map((entry) => (
             <article
               key={entry.id}
-              className="group cursor-pointer"
+              className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
             >
-              {/* Imagen principal solo si existe */}
+              {/* Imagen principal solo si existe - estilo Instagram */}
               {entry.additional_image_url && (
-                <div className="relative aspect-square bg-gray-100 mb-4 overflow-hidden">
+                <div className="relative w-full aspect-square bg-gray-100">
                   <Image
                     src={entry.additional_image_url}
                     alt={entry.title}
                     fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="object-cover"
                     unoptimized
                   />
                 </div>
               )}
               
               {/* Contenido */}
-              <div className="space-y-3">
+              <div className="p-6">
                 {/* Header con cover thumbnail y rating */}
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex gap-3 flex-1 min-w-0">
-                    {entry.cover_image_url && (
-                      <div className="relative w-10 h-14 flex-shrink-0 bg-gray-100 overflow-hidden">
-                        <Image
-                          src={entry.cover_image_url}
-                          alt=""
-                          fill
-                          className="object-cover"
-                          unoptimized
-                        />
-                      </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <h2 className="font-grotesk font-semibold text-black text-base leading-tight mb-1 line-clamp-2">
-                        {entry.title}
-                      </h2>
-                      {entry.author_artist && (
-                        <p className="text-sm text-gray-500 truncate">
-                          {entry.author_artist}
-                        </p>
-                      )}
+                <div className="flex items-start gap-4 mb-4">
+                  {entry.cover_image_url && (
+                    <div className="relative w-12 h-16 flex-shrink-0 bg-gray-100 overflow-hidden rounded">
+                      <Image
+                        src={entry.cover_image_url}
+                        alt=""
+                        fill
+                        className="object-cover"
+                        unoptimized
+                      />
                     </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <h2 className="font-grotesk font-bold text-black text-xl leading-tight mb-2">
+                      {entry.title}
+                    </h2>
+                    {entry.author_artist && (
+                      <p className="text-sm text-gray-500">
+                        {entry.author_artist}
+                      </p>
+                    )}
                   </div>
                   {entry.rating && (
-                    <div className="flex gap-0.5 flex-shrink-0">
-                      {Array.from({ length: entry.rating }).map((_, i) => (
-                        <span key={i} className="text-black text-xs">★</span>
+                    <div className="flex gap-1 flex-shrink-0">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <div
+                          key={i}
+                          className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                            i < entry.rating! ? 'bg-[#35553D]' : 'bg-gray-200'
+                          }`}
+                        />
                       ))}
                     </div>
                   )}
@@ -121,17 +124,17 @@ export default async function FeedPage() {
 
                 {/* Descripción */}
                 {entry.description && (
-                  <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed">
+                  <p className="text-gray-600 leading-relaxed mb-4">
                     {entry.description}
                   </p>
                 )}
 
-                {/* Meta info */}
-                <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                  <span className="text-xs text-gray-400">
+                {/* Meta info y acciones */}
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <span className="text-xs text-gray-400 font-medium">
                     {entry.profiles?.full_name || 'Anonymous'}
                   </span>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-6">
                     <LikeButton
                       entryId={entry.id}
                       initialLiked={entry.userLiked}

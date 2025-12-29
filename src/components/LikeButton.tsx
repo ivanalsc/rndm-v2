@@ -36,15 +36,15 @@ export default function LikeButton({ entryId, initialLiked, initialCount }: Like
         fill="none" 
         className={`transition-all duration-300 ${
           liked 
-            ? 'fill-black scale-110' 
-            : 'stroke-gray-400 group-hover:stroke-black group-hover:scale-110'
+            ? 'fill-[#35553D] scale-110' 
+            : 'stroke-gray-400 group-hover:stroke-[#35553D] group-hover:scale-110'
         }`}
         strokeWidth="1.5"
       >
         <path d="M8 14s-6-4-6-8c0-2 1.5-3 3-3 1.5 0 3 1 3 3 0-2 1.5-3 3-3 1.5 0 3 1 3 3 0 4-6 8-6 8z" />
       </svg>
       <span className={`font-medium transition-colors ${
-        liked ? 'text-black' : 'text-gray-400 group-hover:text-black'
+        liked ? 'text-[#35553D]' : 'text-gray-400 group-hover:text-[#35553D]'
       }`}>
         {count}
       </span>
