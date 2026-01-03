@@ -1,18 +1,21 @@
-// src/app/(dashboard)/feed/page.tsx
 import { createClient } from '@/lib/supabase/server'
-import Image from 'next/image'
-import LikeButton from '@/components/LikeButton'
 import FeedEntry from '@/components/FeedEntry'
+import SearchFilters from '@/components/SearchFilters'
 
-export default async function FeedPage() {
+export default async function FeedPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ search?: string; type?: string }>
+}) {
+  const params = await searchParams
   const supabase = await createClient()
 
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Obtener entradas públicas con información completa
-  const { data: entries } = await supabase
+  // Construir query base
+  let query = supabase
     .from('entries')
     .select(`
       *,
@@ -23,7 +26,21 @@ export default async function FeedPage() {
       )
     `)
     .eq('is_public', true)
-    .order('created_at', { ascending: false })
+
+  // Aplicar filtro de búsqueda
+  if (params.search) {
+    query = query.ilike('title', `%${params.search}%`)
+  }
+
+  // Aplicar filtro de tipo
+  if (params.type) {
+    query = query.eq('type', params.type)
+  }
+
+  // Ordenar
+  query = query.order('created_at', { ascending: false })
+
+  const { data: entries } = await query
 
   // Para cada entrada, obtener likes y comentarios
   const entriesWithInteractions = await Promise.all(
@@ -55,15 +72,21 @@ export default async function FeedPage() {
     })
   )
 
+  const hasFilters = params.search || params.type
+
   return (
     <div className="max-w-4xl mx-auto">
-      <h1 className="text-4xl font-bold font-grotesk text-black mb-12 tracking-tight">
+      <h1 className="text-4xl font-bold font-grotesk text-black mb-8 tracking-tight">
         Feed
       </h1>
       
+      <SearchFilters />
+      
       {!entriesWithInteractions || entriesWithInteractions.length === 0 ? (
         <div className="text-center py-24">
-          <p className="text-gray-400 text-sm">No public entries yet</p>
+          <p className="text-gray-400 text-sm">
+            {hasFilters ? 'No entries found with these filters' : 'No public entries yet'}
+          </p>
         </div>
       ) : (
         <div className="space-y-8">

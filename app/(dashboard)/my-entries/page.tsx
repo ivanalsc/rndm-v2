@@ -1,33 +1,66 @@
-// src/app/(dashboard)/my-entries/page.tsx
 import { createClient } from '@/lib/supabase/server'
 import Image from 'next/image'
 import Link from 'next/link'
 import ShareImageGenerator from '@/components/ShareImageGenerator'
 import DeleteEntryButton from '@/components/DeleteEntryButton'
+import CollectionFilters from '@/components/CollectionFilters'
 
-export default async function MyEntriesPage() {
+export default async function MyEntriesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ search?: string; type?: string; visibility?: string }>
+}) {
+  const params = await searchParams
   const supabase = await createClient()
   
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const { data: entries } = await supabase
+  // Construir query base
+  let query = supabase
     .from('entries')
     .select('*')
     .eq('user_id', user?.id)
-    .order('created_at', { ascending: false })
+
+  // Aplicar filtro de búsqueda
+  if (params.search) {
+    query = query.ilike('title', `%${params.search}%`)
+  }
+
+  // Aplicar filtro de tipo
+  if (params.type) {
+    query = query.eq('type', params.type)
+  }
+
+  // Aplicar filtro de visibilidad
+  if (params.visibility === 'public') {
+    query = query.eq('is_public', true)
+  } else if (params.visibility === 'private') {
+    query = query.eq('is_public', false)
+  }
+
+  // Ordenar
+  query = query.order('created_at', { ascending: false })
+
+  const { data: entries } = await query
 
   return (
     <div className="max-w-7xl mx-auto">
-      <h1 className="text-4xl font-bold font-grotesk text-black mb-12 tracking-tight">
+      <h1 className="text-4xl font-bold font-grotesk text-black mb-8 tracking-tight">
         My Collection
       </h1>
       
+      <CollectionFilters />
+      
       {!entries || entries.length === 0 ? (
         <div className="text-center py-24">
-          <p className="text-gray-400 text-sm mb-2">Your collection is empty</p>
-          <p className="text-gray-300 text-xs">Start by adding your first entry</p>
+          <p className="text-gray-400 text-sm mb-2">
+            {params.search || params.type || params.visibility ? 'No entries found with these filters' : 'Your collection is empty'}
+          </p>
+          {!(params.search || params.type || params.visibility) && (
+            <p className="text-gray-300 text-xs">Start by adding your first entry</p>
+          )}
         </div>
       ) : (
         <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
