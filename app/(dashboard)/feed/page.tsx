@@ -1,3 +1,4 @@
+// src/app/(dashboard)/feed/page.tsx
 import { createClient } from '@/lib/supabase/server'
 import Image from 'next/image'
 import LikeButton from '@/components/LikeButton'
@@ -10,11 +11,13 @@ export default async function FeedPage() {
     data: { user },
   } = await supabase.auth.getUser()
 
+  // Obtener entradas públicas con información completa
   const { data: entries } = await supabase
     .from('entries')
     .select(`
       *,
-      profiles (
+      profiles!entries_user_id_fkey (
+        id,
         full_name,
         username
       )
@@ -22,6 +25,7 @@ export default async function FeedPage() {
     .eq('is_public', true)
     .order('created_at', { ascending: false })
 
+  // Para cada entrada, obtener likes y comentarios
   const entriesWithInteractions = await Promise.all(
     (entries || []).map(async (entry) => {
       const { data: likes, count: likesCount } = await supabase

@@ -1,5 +1,7 @@
+// src/app/(dashboard)/my-entries/page.tsx
 import { createClient } from '@/lib/supabase/server'
 import Image from 'next/image'
+import Link from 'next/link'
 import ShareImageGenerator from '@/components/ShareImageGenerator'
 import DeleteEntryButton from '@/components/DeleteEntryButton'
 
@@ -104,7 +106,15 @@ export default async function MyEntriesPage() {
 
                 {/* Acciones */}
                 <div className="flex items-center gap-3 pt-3 border-t border-gray-100">
+                  <Link
+                    href={`/edit/${entry.id}`}
+                    className="flex-1 text-xs text-gray-400 hover:text-[#35553D] transition-colors font-medium text-center"
+                  >
+                    Edit
+                  </Link>
+                  <div className="w-px h-4 bg-gray-200"></div>
                   <ShareImageGenerator entry={entry} />
+                  <div className="w-px h-4 bg-gray-200"></div>
                   <DeleteEntryButton entryId={entry.id} />
                 </div>
               </div>

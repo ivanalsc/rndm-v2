@@ -1,4 +1,3 @@
-// src/app/actions/entries.ts
 'use server'
 
 import { revalidatePath } from 'next/cache'
@@ -16,10 +15,8 @@ export async function createEntry(formData: FormData) {
     redirect('/login')
   }
 
-  // Manejar la carga de cover (URL de la API)
   const coverImageUrl = formData.get('cover_image_url') as string || null
   
-  // Manejar imagen adicional (archivo subido)
   let additionalImageUrl = null
   const additionalImage = formData.get('additional_image') as File
 
@@ -83,7 +80,6 @@ export async function deleteEntry(entryId: string) {
     redirect('/login')
   }
 
-  // Primero obtener la entrada para eliminar las imágenes si existen
   const { data: entry } = await supabase
     .from('entries')
     .select('cover_image_url, additional_image_url')
@@ -91,7 +87,6 @@ export async function deleteEntry(entryId: string) {
     .eq('user_id', user.id)
     .single()
 
-  // Eliminar imágenes de storage si son de Supabase
   if (entry) {
     const imagesToDelete: string[] = []
     
@@ -125,4 +120,86 @@ export async function deleteEntry(entryId: string) {
 
   revalidatePath('/feed')
   revalidatePath('/my-entries')
+}
+
+export async function updateEntry(entryId: string, formData: FormData) {
+  const supabase = await createClient()
+  
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    redirect('/login')
+  }
+
+  const { data: currentEntry } = await supabase
+    .from('entries')
+    .select('additional_image_url')
+    .eq('id', entryId)
+    .eq('user_id', user.id)
+    .single()
+
+  if (!currentEntry) {
+    return { error: 'Entry not found' }
+  }
+
+  let additionalImageUrl = currentEntry.additional_image_url
+
+  const newImage = formData.get('additional_image') as File
+  if (newImage && newImage.size > 0) {
+    if (currentEntry.additional_image_url) {
+      const oldFileName = currentEntry.additional_image_url.split('/').pop()
+      if (oldFileName) {
+        await supabase.storage.from('covers').remove([oldFileName])
+      }
+    }
+
+    const fileExt = newImage.name.split('.').pop()
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
+
+    const { error: uploadError } = await supabase.storage
+      .from('covers')
+      .upload(fileName, newImage, {
+        cacheControl: '3600',
+        upsert: false
+      })
+
+    if (uploadError) {
+      console.error('Error uploading image:', uploadError)
+      return { error: `Error al subir la imagen: ${uploadError.message}` }
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('covers')
+      .getPublicUrl(fileName)
+    
+    additionalImageUrl = publicUrl
+  }
+
+  const rating = formData.get('rating')
+
+  const data = {
+    title: formData.get('title') as string,
+    description: formData.get('description') as string || null,
+    rating: rating ? parseInt(rating as string) : null,
+    is_public: formData.get('is_public') === 'on',
+    additional_image_url: additionalImageUrl,
+  }
+
+  const { error } = await supabase
+    .from('entries')
+    .update(data)
+    .eq('id', entryId)
+    .eq('user_id', user.id)
+
+  if (error) {
+    console.error('Error updating entry:', error)
+    return { error: error.message }
+  }
+
+  revalidatePath('/feed')
+  revalidatePath('/my-entries')
+  revalidatePath(`/edit/${entryId}`)
+  redirect('/my-entries')
 }

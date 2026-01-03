@@ -309,9 +309,7 @@ export default function ShareImageGenerator({ entry }: ShareImageGeneratorProps)
                   {entry.author_artist && (
                     <span className="text-gray-500">by {entry.author_artist}</span>
                   )}
-                  <span className="text-[#35553D] font-medium">
-                    {getTypeIcon()} {getTypeLabel()}
-                  </span>
+              
                 </div>
               </div>
             </div>
