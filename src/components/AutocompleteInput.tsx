@@ -64,7 +64,7 @@ export default function AutocompleteInput({
         type="text"
         name="title"
         disabled
-        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-400"
+        className="w-full px-4 py-3 bg-gray-300 neobrutal-border neobrutal-shadow-sm text-gray-500 font-bold uppercase"
         placeholder="First select a content type"
       />
     )
@@ -78,28 +78,28 @@ export default function AutocompleteInput({
         required
         value={query}
         onChange={handleChange}
-        className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-black focus:outline-none focus:ring-2 focus:ring-[#35553D] focus:border-transparent transition-all"
+        className="w-full px-4 py-4 bg-white neobrutal-border neobrutal-shadow-sm text-black font-bold focus:outline-none focus:bg-[#00F5FF] focus:translate-x-1 focus:translate-y-1 focus:shadow-none transition-all uppercase placeholder:text-black placeholder:opacity-70"
         placeholder="Start typing..."
         autoComplete="off"
       />
 
       {isLoading && (
         <div className="absolute right-4 top-1/2 -translate-y-1/2">
-          <div className="animate-spin h-4 w-4 border-2 border-[#35553D] border-t-transparent rounded-full"></div>
+          <div className="animate-spin h-5 w-5 border-3 border-black border-t-transparent"></div>
         </div>
       )}
 
       {showResults && results.length > 0 && (
-        <div className="absolute z-10 w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-lg max-h-96 overflow-y-auto">
+        <div className="absolute z-10 w-full mt-2 bg-white neobrutal-border neobrutal-shadow max-h-96 overflow-y-auto">
           {results.map((result, index) => (
             <button
               key={index}
               type="button"
               onClick={() => handleSelect(result)}
-              className="w-full text-left px-4 py-3 hover:bg-gray-50 flex gap-3 items-start border-b last:border-b-0 transition-colors"
+              className="w-full text-left px-4 py-3 flex gap-3 items-start border-b-4 border-black last:border-b-0 transition-all hover:bg-[#00F5FF] hover:translate-x-1 bg-white"
             >
               {result.cover_image_url ? (
-                <div className="relative w-10 h-14 flex-shrink-0 bg-gray-100 rounded overflow-hidden">
+                <div className="relative w-12 h-16 flex-shrink-0 bg-white neobrutal-border neobrutal-shadow-sm overflow-hidden">
                   <Image
                     src={result.cover_image_url}
                     alt={result.title}
@@ -109,7 +109,7 @@ export default function AutocompleteInput({
                   />
                 </div>
               ) : (
-                <div className="w-10 h-14 flex-shrink-0 bg-gray-100 rounded flex items-center justify-center text-xl">
+                <div className="w-12 h-16 flex-shrink-0 bg-white neobrutal-border neobrutal-shadow-sm flex items-center justify-center text-xl">
                   {type === 'book' && '📚'}
                   {type === 'music' && '🎵'}
                   {type === 'movie' && '🎬'}
@@ -117,16 +117,16 @@ export default function AutocompleteInput({
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-black truncate text-sm">
+                <p className="font-bold text-black truncate text-sm uppercase">
                   {result.title}
                 </p>
                 {result.author_artist && (
-                  <p className="text-xs text-gray-500 truncate">
+                  <p className="text-xs text-black font-bold truncate">
                     {result.author_artist}
                   </p>
                 )}
                 {result.year && (
-                  <p className="text-xs text-gray-400">{result.year}</p>
+                  <p className="text-xs text-black font-bold">{result.year}</p>
                 )}
               </div>
             </button>
@@ -135,7 +135,7 @@ export default function AutocompleteInput({
       )}
 
       {showResults && results.length === 0 && !isLoading && query.length >= 2 && (
-        <div className="absolute z-10 w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-lg p-4 text-sm text-gray-500">
+        <div className="absolute z-10 w-full mt-2 bg-white neobrutal-border neobrutal-shadow-sm p-4 text-sm text-black font-bold uppercase">
           No results found. You can type manually.
         </div>
       )}

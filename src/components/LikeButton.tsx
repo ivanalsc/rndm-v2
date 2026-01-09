@@ -27,24 +27,23 @@ export default function LikeButton({ entryId, initialLiked, initialCount }: Like
     <button
       onClick={handleLike}
       disabled={isPending}
-      className="flex items-center gap-1.5 text-xs transition-all disabled:opacity-50 group"
+      className={`flex items-center gap-2 px-3 py-2 neobrutal-border neobrutal-shadow-sm transition-all disabled:opacity-50 hover:translate-x-1 hover:translate-y-1 hover:shadow-none ${
+        liked ? 'bg-[#FF1744]' : 'bg-[#39FF14]'
+      }`}
     >
       <svg 
-        width="16" 
-        height="16" 
+        width="18" 
+        height="18" 
         viewBox="0 0 16 16" 
-        fill="none" 
-        className={`transition-all duration-300 ${
-          liked 
-            ? 'fill-[#35553D] scale-110' 
-            : 'stroke-gray-400 group-hover:stroke-[#35553D] group-hover:scale-110'
-        }`}
-        strokeWidth="1.5"
+        fill={liked ? 'white' : 'none'}
+        className="transition-all"
+        stroke={liked ? 'white' : 'black'}
+        strokeWidth="3"
       >
         <path d="M8 14s-6-4-6-8c0-2 1.5-3 3-3 1.5 0 3 1 3 3 0-2 1.5-3 3-3 1.5 0 3 1 3 3 0 4-6 8-6 8z" />
       </svg>
-      <span className={`font-medium transition-colors ${
-        liked ? 'text-[#35553D]' : 'text-gray-400 group-hover:text-[#35553D]'
+      <span className={`font-bold text-sm transition-colors ${
+        liked ? 'text-white' : 'text-black'
       }`}>
         {count}
       </span>

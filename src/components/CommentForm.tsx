@@ -22,22 +22,22 @@ export default function CommentForm({ entryId }: CommentFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2">
+    <form onSubmit={handleSubmit} className="flex gap-3">
       <input
         type="text"
         value={newComment}
         onChange={(e) => setNewComment(e.target.value)}
-        placeholder="Add a comment..."
-        className="flex-1 px-4 py-2.5 bg-gray-50 border-0 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-[#35553D] transition-all"
+        placeholder="ADD A COMMENT..."
+        className="flex-1 px-4 py-3 bg-white neobrutal-border neobrutal-shadow-sm text-black font-bold text-sm focus:outline-none focus:bg-[#00F5FF] focus:translate-x-1 focus:translate-y-1 focus:shadow-none transition-all uppercase placeholder:text-black placeholder:opacity-70 disabled:opacity-50"
         disabled={isPending}
         autoFocus
       />
       <button
         type="submit"
         disabled={isPending || !newComment.trim()}
-        className="px-5 py-2.5 bg-[#35553D] text-white text-sm rounded-xl hover:bg-[#2a4430] disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed transition-all font-medium flex-shrink-0"
+        className="px-6 py-3 bg-[#00F5FF] text-black font-bold text-sm neobrutal-border neobrutal-shadow-sm hover:translate-x-1 hover:translate-y-1 hover:shadow-none disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-sm transition-all uppercase flex-shrink-0"
       >
-        {isPending ? '...' : 'Post'}
+        {isPending ? '...' : 'POST'}
       </button>
     </form>
   )

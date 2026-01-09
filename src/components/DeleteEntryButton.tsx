@@ -22,7 +22,7 @@ export default function DeleteEntryButton({ entryId }: DeleteEntryButtonProps) {
     <button
       onClick={handleDelete}
       disabled={isPending}
-      className="flex-1 text-xs text-gray-400 hover:text-black transition-colors disabled:opacity-50 font-medium"
+      className="flex-1 text-xs font-bold text-white bg-[#FF1744] px-3 py-2 neobrutal-border neobrutal-shadow-sm hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all disabled:opacity-50 disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-sm uppercase"
     >
       {isPending ? 'Deleting...' : 'Delete'}
     </button>

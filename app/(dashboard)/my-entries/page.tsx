@@ -46,20 +46,20 @@ export default async function MyEntriesPage({
   const { data: entries } = await query
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <h1 className="text-4xl font-bold font-grotesk text-black mb-8 tracking-tight">
+    <div className="max-w-7xl mx-auto px-4">
+      <h1 className="text-5xl font-bold font-grotesk text-black mb-8 tracking-tight neobrutal-border bg-white px-6 py-4 inline-block neobrutal-shadow uppercase">
         My Collection
       </h1>
       
       <CollectionFilters />
       
       {!entries || entries.length === 0 ? (
-        <div className="text-center py-24">
-          <p className="text-gray-400 text-sm mb-2">
+        <div className="text-center neobrutal-border bg-white px-8 py-12 neobrutal-shadow">
+          <p className="text-black font-bold text-lg mb-2 uppercase">
             {params.search || params.type || params.visibility ? 'No entries found with these filters' : 'Your collection is empty'}
           </p>
           {!(params.search || params.type || params.visibility) && (
-            <p className="text-gray-300 text-xs">Start by adding your first entry</p>
+            <p className="text-black font-bold text-sm uppercase">Start by adding your first entry</p>
           )}
         </div>
       ) : (
@@ -67,11 +67,11 @@ export default async function MyEntriesPage({
           {entries.map((entry) => (
             <article
               key={entry.id}
-              className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 break-inside-avoid"
+              className="group neobrutal-border neobrutal-shadow overflow-hidden break-inside-avoid transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-none bg-white"
             >
               {/* Imagen principal solo si existe - estilo Instagram */}
               {entry.additional_image_url && (
-                <div className="relative w-full aspect-square bg-gray-100">
+                <div className="relative w-full aspect-square neobrutal-border-thick border-b-0">
                   <Image
                     src={entry.additional_image_url}
                     alt={entry.title}
@@ -87,7 +87,7 @@ export default async function MyEntriesPage({
                 {/* Header con cover thumbnail */}
                 <div className="flex items-start gap-3 mb-3">
                   {entry.cover_image_url && (
-                    <div className="relative w-10 h-14 flex-shrink-0 bg-gray-100 overflow-hidden rounded">
+                    <div className="relative w-12 h-16 flex-shrink-0 bg-white overflow-hidden neobrutal-border neobrutal-shadow-sm">
                       <Image
                         src={entry.cover_image_url}
                         alt=""
@@ -98,11 +98,11 @@ export default async function MyEntriesPage({
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
-                    <h2 className="font-grotesk font-bold text-black text-base leading-tight mb-1 line-clamp-2">
+                    <h2 className="font-grotesk font-bold text-black text-base leading-tight mb-1 line-clamp-2 uppercase">
                       {entry.title}
                     </h2>
                     {entry.author_artist && (
-                      <p className="text-xs text-gray-500 truncate">
+                      <p className="text-xs text-black font-bold bg-white px-2 py-1 inline-block neobrutal-border neobrutal-shadow-sm truncate">
                         {entry.author_artist}
                       </p>
                     )}
@@ -112,19 +112,19 @@ export default async function MyEntriesPage({
                 {/* Rating y estado */}
                 <div className="flex items-center justify-between mb-3">
                   {entry.rating && (
-                    <div className="flex gap-1">
+                    <div className="flex gap-1.5">
                       {Array.from({ length: 5 }).map((_, i) => (
                         <div
                           key={i}
-                          className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                            i < entry.rating! ? 'bg-[#35553D]' : 'bg-gray-200'
+                          className={`w-4 h-4 neobrutal-border transition-all ${
+                            i < entry.rating! ? 'bg-[#39FF14]' : 'bg-white'
                           }`}
                         />
                       ))}
                     </div>
                   )}
                   {!entry.is_public && (
-                    <span className="text-xs text-gray-400 px-2 py-0.5 bg-gray-50 rounded">
+                    <span className="text-xs font-bold text-black bg-white px-3 py-1 neobrutal-border neobrutal-shadow-sm uppercase">
                       Private
                     </span>
                   )}
@@ -132,22 +132,20 @@ export default async function MyEntriesPage({
 
                 {/* Descripción */}
                 {entry.description && (
-                  <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed mb-3">
+                  <p className="text-sm text-black font-medium line-clamp-2 leading-relaxed mb-3">
                     {entry.description}
                   </p>
                 )}
 
                 {/* Acciones */}
-                <div className="flex items-center gap-3 pt-3 border-t border-gray-100">
+                <div className="flex items-center gap-2 pt-3 border-t-4 border-black">
                   <Link
                     href={`/edit/${entry.id}`}
-                    className="flex-1 text-xs text-gray-400 hover:text-[#35553D] transition-colors font-medium text-center"
+                    className="flex-1 text-xs font-bold text-black bg-white px-3 py-2 neobrutal-border neobrutal-shadow-sm hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all text-center uppercase"
                   >
                     Edit
                   </Link>
-                  <div className="w-px h-4 bg-gray-200"></div>
                   <ShareImageGenerator entry={entry} />
-                  <div className="w-px h-4 bg-gray-200"></div>
                   <DeleteEntryButton entryId={entry.id} />
                 </div>
               </div>

@@ -9,8 +9,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-geist-sans)', 'system-ui', 'sans-serif'],
-        grotesk: ['Space Grotesk', 'system-ui', 'sans-serif'],
+        sans: ['Syne', 'system-ui', 'sans-serif'],
+        grotesk: ['Syne', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "rgb(229 231 235)",

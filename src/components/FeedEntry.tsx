@@ -43,6 +43,7 @@ interface Entry {
 interface FeedEntryProps {
   entry: Entry
   currentUserId: string
+  bgColor?: string
 }
 
 export default function FeedEntry({ entry, currentUserId }: FeedEntryProps) {
@@ -58,10 +59,12 @@ export default function FeedEntry({ entry, currentUserId }: FeedEntryProps) {
   }
 
   return (
-    <article className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
+    <article 
+      className="group neobrutal-border neobrutal-shadow overflow-hidden transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-none bg-white"
+    >
       {/* Imagen principal solo si existe */}
       {entry.additional_image_url && (
-        <div className="relative w-full aspect-square bg-gray-100">
+        <div className="relative w-full aspect-square neobrutal-border-thick border-b-0">
           <Image
             src={entry.additional_image_url}
             alt={entry.title}
@@ -77,7 +80,7 @@ export default function FeedEntry({ entry, currentUserId }: FeedEntryProps) {
         {/* Header con cover thumbnail y rating */}
         <div className="flex items-start gap-4 mb-4">
           {entry.cover_image_url && (
-            <div className="relative w-12 h-16 flex-shrink-0 bg-gray-100 overflow-hidden rounded">
+            <div className="relative w-16 h-20 flex-shrink-0 bg-white overflow-hidden neobrutal-border neobrutal-shadow-sm">
               <Image
                 src={entry.cover_image_url}
                 alt=""
@@ -88,22 +91,22 @@ export default function FeedEntry({ entry, currentUserId }: FeedEntryProps) {
             </div>
           )}
           <div className="flex-1 min-w-0">
-            <h2 className="font-grotesk font-bold text-black text-xl leading-tight mb-2">
+            <h2 className="font-grotesk font-bold text-black text-2xl leading-tight mb-2 uppercase tracking-tight">
               {entry.title}
             </h2>
             {entry.author_artist && (
-              <p className="text-sm text-gray-500">
+              <p className="text-sm font-bold text-black bg-white px-3 py-1 inline-block neobrutal-border neobrutal-shadow-sm">
                 {entry.author_artist}
               </p>
             )}
           </div>
           {entry.rating && (
-            <div className="flex gap-1 flex-shrink-0">
+            <div className="flex gap-1.5 flex-shrink-0">
               {Array.from({ length: 5 }).map((_, i) => (
                 <div
                   key={i}
-                  className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                    i < entry.rating! ? 'bg-[#35553D]' : 'bg-gray-200'
+                  className={`w-4 h-4 neobrutal-border transition-all ${
+                    i < entry.rating! ? 'bg-[#39FF14]' : 'bg-white'
                   }`}
                 />
               ))}
@@ -113,21 +116,21 @@ export default function FeedEntry({ entry, currentUserId }: FeedEntryProps) {
 
         {/* Descripción */}
         {entry.description && (
-          <p className="text-gray-600 leading-relaxed mb-4">
+          <p className="text-black font-medium leading-relaxed mb-4 text-base">
             {entry.description}
           </p>
         )}
 
         {/* Meta info y acciones */}
-        <div className="pt-4 border-t border-gray-100">
+        <div className="pt-4 border-t-4 border-black">
           <div className="flex items-center justify-between">
             <Link 
               href={`/profile/${entry.user_id}`}
-              className="text-xs text-gray-400 hover:text-[#35553D] font-medium transition-colors"
+              className="text-sm font-bold text-black bg-white px-4 py-2 neobrutal-border neobrutal-shadow-sm hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all uppercase"
             >
               {entry.profiles?.full_name || 'Anonymous'}
             </Link>
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4">
               <LikeButton
                 entryId={entry.id}
                 initialLiked={entry.userLiked}
@@ -146,51 +149,53 @@ export default function FeedEntry({ entry, currentUserId }: FeedEntryProps) {
 
         {/* Sección de comentarios expandida */}
         {commentsOpen && (
-          <div className="mt-4 space-y-4 animate-in slide-in-from-top-2 duration-200 border-t border-gray-100 pt-4">
+              <div className="mt-4 space-y-4 border-t-4 border-black pt-4">
             {/* Lista de comentarios */}
             {entry.comments.length > 0 && (
               <div className="space-y-3 max-h-80 overflow-y-auto">
                 {entry.comments.map((comment) => (
-                  <div key={comment.id} className="group flex gap-2.5">
-                    {/* Avatar clickeable */}
-                    <Link 
-                      href={`/profile/${comment.user_id}`}
-                      className="w-7 h-7 rounded-full bg-[#35553D]/10 flex items-center justify-center flex-shrink-0 mt-0.5 hover:bg-[#35553D]/20 transition-colors"
-                    >
-                      <span className="text-xs font-medium text-[#35553D]">
-                        {(comment.profiles?.full_name || 'A').charAt(0).toUpperCase()}
-                      </span>
-                    </Link>
-                    
-                    <div className="flex-1 min-w-0">
-                      <div className="bg-gray-50 rounded-xl px-3 py-2.5">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="font-medium text-black text-xs">
-                            {comment.profiles?.full_name || 'Anonymous'}
-                          </span>
-                          {comment.user_id === currentUserId && (
-                            <button
-                              onClick={() => handleDeleteComment(comment.id)}
-                              className="text-xs text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
-                              disabled={isPending}
-                            >
-                              Delete
-                            </button>
-                          )}
+                    <div key={comment.id} className="group flex gap-3">
+                      {/* Avatar clickeable */}
+                      <Link 
+                        href={`/profile/${comment.user_id}`}
+                        className="w-10 h-10 bg-white neobrutal-border neobrutal-shadow-sm flex items-center justify-center flex-shrink-0 hover:bg-[#00F5FF] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all"
+                      >
+                        <span className="text-sm font-bold text-black">
+                          {(comment.profiles?.full_name || 'A').charAt(0).toUpperCase()}
+                        </span>
+                      </Link>
+                      
+                      <div className="flex-1 min-w-0">
+                        <div 
+                          className="px-4 py-3 neobrutal-border neobrutal-shadow-sm bg-white"
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-bold text-black text-sm uppercase">
+                              {comment.profiles?.full_name || 'Anonymous'}
+                            </span>
+                            {comment.user_id === currentUserId && (
+                              <button
+                                onClick={() => handleDeleteComment(comment.id)}
+                                className="text-xs font-bold text-black bg-white px-2 py-1 neobrutal-border neobrutal-shadow-sm hover:bg-[#FF1744] hover:text-white opacity-0 group-hover:opacity-100 transition-all"
+                                disabled={isPending}
+                              >
+                                DELETE
+                              </button>
+                            )}
+                          </div>
+                          <p className="text-sm text-black font-medium leading-relaxed">
+                            {comment.content}
+                          </p>
                         </div>
-                        <p className="text-sm text-gray-700 leading-relaxed">
-                          {comment.content}
-                        </p>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             )}
 
             {entry.comments.length === 0 && (
-              <p className="text-xs text-gray-400 text-center py-3">
-                No comments yet
+              <p className="text-sm font-bold text-black text-center py-4 bg-white neobrutal-border neobrutal-shadow-sm">
+                NO COMMENTS YET
               </p>
             )}
             

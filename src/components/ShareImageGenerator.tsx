@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import Image from 'next/image'
 
 interface ShareImageGeneratorProps {
@@ -19,6 +20,12 @@ interface ShareImageGeneratorProps {
 export default function ShareImageGenerator({ entry }: ShareImageGeneratorProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  // Ensure component is mounted before using portal
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const getTypeIcon = () => {
     switch (entry.type) {
@@ -205,45 +212,50 @@ export default function ShareImageGenerator({ entry }: ShareImageGeneratorProps)
     }
   }
 
-  return (
-    <>
-      <button
-        onClick={() => setIsOpen(true)}
-        className="flex-1 text-xs text-gray-400 hover:text-[#35553D] transition-colors font-medium"
-      >
-        Share
-      </button>
-
-      {isOpen && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl animate-in zoom-in-95 duration-200">
+  const modalContent = isOpen && mounted ? (
+    <div 
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          setIsOpen(false)
+        }
+      }}
+      style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
+    >
+          <div 
+            className="bg-white neobrutal-border neobrutal-shadow max-w-lg w-full p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-bold font-grotesk text-black">Share Entry</h3>
+              <h3 className="text-2xl font-bold font-grotesk text-black uppercase">Share Entry</h3>
               <button
-                onClick={() => setIsOpen(false)}
-                className="text-gray-400 hover:text-black transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setIsOpen(false)
+                }}
+                className="text-black hover:bg-[#FF1744] hover:text-white w-8 h-8 neobrutal-border neobrutal-shadow-sm flex items-center justify-center transition-all"
               >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                   <path d="M18 6L6 18M6 6l12 12" />
                 </svg>
               </button>
             </div>
 
-            <div className="mb-6 bg-[#FAF9F6] rounded-xl overflow-hidden p-8">
+            <div className="mb-6 bg-white neobrutal-border neobrutal-shadow-sm overflow-hidden p-8">
               <div className="space-y-4">
                 <div className="text-center">
-                  <h4 className="font-grotesk font-bold text-black text-base mb-2 line-clamp-2">
+                  <h4 className="font-grotesk font-bold text-black text-base mb-2 line-clamp-2 uppercase">
                     {entry.title}
                   </h4>
                   
                   {/* Rating preview */}
                   {entry.rating && (
-                    <div className="flex gap-1 justify-center mb-2">
+                    <div className="flex gap-1.5 justify-center mb-2">
                       {Array.from({ length: 5 }).map((_, i) => (
                         <div
                           key={i}
-                          className={`w-1.5 h-1.5 rounded-full ${
-                            i < entry.rating! ? 'bg-[#35553D]' : 'bg-gray-200'
+                          className={`w-4 h-4 neobrutal-border ${
+                            i < entry.rating! ? 'bg-[#39FF14]' : 'bg-white'
                           }`}
                         />
                       ))}
@@ -251,7 +263,7 @@ export default function ShareImageGenerator({ entry }: ShareImageGeneratorProps)
                   )}
                   
                   {entry.description && (
-                    <p className="text-xs text-gray-600 line-clamp-2 mb-3">
+                    <p className="text-xs text-black font-bold line-clamp-2 mb-3 uppercase">
                       {entry.description}
                     </p>
                   )}
@@ -261,7 +273,7 @@ export default function ShareImageGenerator({ entry }: ShareImageGeneratorProps)
                   {entry.additional_image_url && entry.cover_image_url ? (
                     <>
                       <div className="absolute right-0 -top-8 z-10">
-                        <div className="relative w-12 h-16 bg-gray-100 rounded overflow-hidden transform rotate-6 shadow-md">
+                        <div className="relative w-16 h-20 bg-white neobrutal-border neobrutal-shadow-sm overflow-hidden transform rotate-6">
                           <Image
                             src={entry.cover_image_url}
                             alt=""
@@ -271,7 +283,7 @@ export default function ShareImageGenerator({ entry }: ShareImageGeneratorProps)
                           />
                         </div>
                       </div>
-                      <div className="relative w-full h-40 bg-gray-100 rounded-lg overflow-hidden mt-4">
+                      <div className="relative w-full h-40 bg-white neobrutal-border neobrutal-shadow-sm overflow-hidden mt-4">
                         <Image
                           src={entry.additional_image_url}
                           alt=""
@@ -282,7 +294,7 @@ export default function ShareImageGenerator({ entry }: ShareImageGeneratorProps)
                       </div>
                     </>
                   ) : entry.additional_image_url ? (
-                    <div className="relative w-full h-40 bg-gray-100 rounded-lg overflow-hidden">
+                    <div className="relative w-full h-40 bg-white neobrutal-border neobrutal-shadow-sm overflow-hidden">
                       <Image
                         src={entry.additional_image_url}
                         alt=""
@@ -292,7 +304,7 @@ export default function ShareImageGenerator({ entry }: ShareImageGeneratorProps)
                       />
                     </div>
                   ) : entry.cover_image_url ? (
-                    <div className="relative w-28 h-40 bg-gray-100 rounded overflow-hidden mx-auto">
+                    <div className="relative w-28 h-40 bg-white neobrutal-border neobrutal-shadow-sm overflow-hidden mx-auto">
                       <Image
                         src={entry.cover_image_url}
                         alt=""
@@ -305,9 +317,9 @@ export default function ShareImageGenerator({ entry }: ShareImageGeneratorProps)
                 </div>
                 
                 <div className="flex justify-between items-center pt-2 text-xs">
-                  <span className="text-gray-400 font-bold font-grotesk">rndm</span>
+                  <span className="text-black font-bold font-grotesk uppercase">rndm</span>
                   {entry.author_artist && (
-                    <span className="text-gray-500">by {entry.author_artist}</span>
+                    <span className="text-black font-bold uppercase">by {entry.author_artist}</span>
                   )}
               
                 </div>
@@ -315,18 +327,21 @@ export default function ShareImageGenerator({ entry }: ShareImageGeneratorProps)
             </div>
 
             <button
-              onClick={generateAndDownloadImage}
+              onClick={(e) => {
+                e.stopPropagation()
+                generateAndDownloadImage()
+              }}
               disabled={isGenerating}
-              className="w-full bg-[#35553D] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#2a4430] disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+              className="w-full bg-[#00F5FF] text-black px-6 py-4 neobrutal-border neobrutal-shadow font-bold hover:translate-x-1 hover:translate-y-1 hover:shadow-none disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-sm transition-all flex items-center justify-center gap-2 uppercase"
             >
               {isGenerating ? (
                 <>
-                  <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
+                  <div className="animate-spin h-5 w-5 border-3 border-black border-t-transparent"></div>
                   Generating...
                 </>
               ) : (
                 <>
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="3">
                     <path d="M14 11v2a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-2M8 11V3M5 6l3-3 3 3" />
                   </svg>
                   Download Image
@@ -335,7 +350,21 @@ export default function ShareImageGenerator({ entry }: ShareImageGeneratorProps)
             </button>
           </div>
         </div>
-      )}
+  ) : null
+
+  return (
+    <>
+      <button
+        onClick={(e) => {
+          e.stopPropagation()
+          setIsOpen(true)
+        }}
+        className="flex-1 text-xs font-bold text-black bg-white px-3 py-2 neobrutal-border neobrutal-shadow-sm hover:bg-[#00F5FF] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all uppercase"
+      >
+        Share
+      </button>
+
+      {mounted && modalContent && createPortal(modalContent, document.body)}
     </>
   )
 }

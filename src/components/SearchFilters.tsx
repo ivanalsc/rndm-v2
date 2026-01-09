@@ -45,31 +45,32 @@ export default function SearchFilters() {
 
   return (
     <div className="space-y-4 mb-8">
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col sm:flex-row gap-4">
         {/* Búsqueda */}
         <div className="flex-1">
           <div className="relative">
             <svg 
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-black z-10"
               fill="none" 
               stroke="currentColor" 
+              strokeWidth="3"
               viewBox="0 0 24 24"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             <input
               type="text"
               value={search}
               onChange={(e) => handleSearch(e.target.value)}
-              placeholder="Search by title..."
-              className="w-full pl-11 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-black focus:outline-none focus:ring-2 focus:ring-[#35553D] focus:border-transparent transition-all"
+              placeholder="SEARCH BY TITLE..."
+              className="w-full pl-12 pr-12 py-4 bg-white neobrutal-border neobrutal-shadow text-black font-bold text-base focus:outline-none focus:bg-[#00F5FF] focus:translate-x-1 focus:translate-y-1 focus:shadow-none transition-all uppercase placeholder:text-black placeholder:opacity-70"
             />
             {search && (
               <button
                 onClick={() => handleSearch('')}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-black hover:bg-[#FF1744] hover:text-white w-8 h-8 neobrutal-border neobrutal-shadow-sm flex items-center justify-center transition-all"
               >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="3">
                   <path d="M12 4L4 12M4 4l8 8" />
                 </svg>
               </button>
@@ -78,37 +79,37 @@ export default function SearchFilters() {
         </div>
 
         {/* Filtro por tipo */}
-        <div className="sm:w-48">
+        <div className="sm:w-56">
           <select
             value={type}
             onChange={(e) => handleTypeChange(e.target.value)}
-            className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-black focus:outline-none focus:ring-2 focus:ring-[#35553D] focus:border-transparent transition-all appearance-none cursor-pointer"
+            className="w-full px-4 py-4 bg-white neobrutal-border neobrutal-shadow text-black font-bold text-base focus:outline-none focus:bg-[#00F5FF] focus:translate-x-1 focus:translate-y-1 focus:shadow-none transition-all appearance-none cursor-pointer uppercase"
           >
-            <option value="all">All types</option>
-            <option value="book">📚 Books</option>
-            <option value="music">🎵 Music</option>
-            <option value="movie">🎬 Movies</option>
-            <option value="series">📺 Series</option>
+            <option value="all">ALL TYPES</option>
+            <option value="book">📚 BOOKS</option>
+            <option value="music">🎵 MUSIC</option>
+            <option value="movie">🎬 MOVIES</option>
+            <option value="series">📺 SERIES</option>
           </select>
         </div>
       </div>
 
       {/* Clear filters */}
       {hasFilters && (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <button
             onClick={clearFilters}
-            className="text-xs text-gray-500 hover:text-[#35553D] transition-colors flex items-center gap-1"
+            className="text-sm font-bold text-black bg-white px-4 py-2 neobrutal-border neobrutal-shadow-sm hover:bg-[#00F5FF] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all uppercase flex items-center gap-2"
           >
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="3">
               <path d="M9 3L3 9M3 3l6 6" />
             </svg>
-            Clear filters
+            CLEAR FILTERS
           </button>
-          <span className="text-xs text-gray-400">
-            {search && `"${search}"`}
+          <span className="text-sm font-bold text-black bg-white px-4 py-2 neobrutal-border neobrutal-shadow-sm uppercase">
+            {search && `"${search.toUpperCase()}"`}
             {search && type !== 'all' && ' · '}
-            {type !== 'all' && `${type}`}
+            {type !== 'all' && `${type.toUpperCase()}`}
           </span>
         </div>
       )}

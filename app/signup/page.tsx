@@ -3,16 +3,18 @@ import { signUp, signInWithGoogle } from '../../app/actions/auth'
 
 export default function SignupPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#FAF9F6] px-4">
+    <div className="min-h-screen flex items-center justify-center bg-white px-4">
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold font-grotesk text-black mb-3 tracking-tight">rndm</h1>
-          <p className="text-gray-500 text-sm">Track and share your cultural journey</p>
+          <h1 className="text-6xl font-bold font-grotesk text-black mb-4 tracking-tight neobrutal-border bg-white px-6 py-4 inline-block neobrutal-shadow uppercase">
+            rndm
+          </h1>
+          <p className="text-black font-bold text-base bg-white px-4 py-2 neobrutal-border neobrutal-shadow-sm inline-block uppercase">Track and share your cultural journey</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm p-8 space-y-6">
+        <div className="bg-white neobrutal-border neobrutal-shadow p-8 space-y-6">
           <div>
-            <h2 className="text-2xl font-bold font-grotesk text-black mb-6">
+            <h2 className="text-3xl font-bold font-grotesk text-black mb-6 uppercase">
               Create account
             </h2>
           </div>
@@ -21,7 +23,7 @@ export default function SignupPage() {
           <form action={signInWithGoogle}>
             <button
               type="submit"
-              className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border-2 border-gray-200 rounded-xl text-black font-medium hover:bg-gray-50 transition-all"
+              className="w-full flex items-center justify-center gap-3 px-4 py-4 bg-white neobrutal-border neobrutal-shadow-sm text-black font-bold hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all uppercase"
             >
               <svg width="20" height="20" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -35,17 +37,17 @@ export default function SignupPage() {
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200"></div>
+              <div className="w-full border-t-4 border-black"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-gray-500">Or continue with email</span>
+              <span className="px-4 bg-white text-black font-bold uppercase">Or continue with email</span>
             </div>
           </div>
 
           {/* Email Sign Up */}
           <form action={signUp} className="space-y-4">
             <div>
-              <label htmlFor="full_name" className="block text-sm font-medium text-black mb-2">
+              <label htmlFor="full_name" className="block text-sm font-bold text-black mb-2 uppercase">
                 Full name
               </label>
               <input
@@ -53,12 +55,12 @@ export default function SignupPage() {
                 name="full_name"
                 type="text"
                 required
-                className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl text-black focus:outline-none focus:ring-2 focus:ring-[#35553D] transition-all"
+                className="w-full px-4 py-3 bg-white neobrutal-border neobrutal-shadow-sm text-black font-bold focus:outline-none focus:bg-[#00F5FF] focus:translate-x-1 focus:translate-y-1 focus:shadow-none transition-all uppercase placeholder:text-black placeholder:opacity-70"
                 placeholder="John Doe"
               />
             </div>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-black mb-2">
+              <label htmlFor="email" className="block text-sm font-bold text-black mb-2 uppercase">
                 Email
               </label>
               <input
@@ -67,12 +69,12 @@ export default function SignupPage() {
                 type="email"
                 autoComplete="email"
                 required
-                className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl text-black focus:outline-none focus:ring-2 focus:ring-[#35553D] transition-all"
+                className="w-full px-4 py-3 bg-white neobrutal-border neobrutal-shadow-sm text-black font-bold focus:outline-none focus:bg-[#00F5FF] focus:translate-x-1 focus:translate-y-1 focus:shadow-none transition-all uppercase placeholder:text-black placeholder:opacity-70"
                 placeholder="you@example.com"
               />
             </div>
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-black mb-2">
+              <label htmlFor="password" className="block text-sm font-bold text-black mb-2 uppercase">
                 Password
               </label>
               <input
@@ -82,25 +84,25 @@ export default function SignupPage() {
                 autoComplete="new-password"
                 required
                 minLength={6}
-                className="w-full px-4 py-3 bg-gray-50 border-0 rounded-xl text-black focus:outline-none focus:ring-2 focus:ring-[#35553D] transition-all"
+                className="w-full px-4 py-3 bg-white neobrutal-border neobrutal-shadow-sm text-black font-bold focus:outline-none focus:bg-[#00F5FF] focus:translate-x-1 focus:translate-y-1 focus:shadow-none transition-all"
                 placeholder="••••••••"
               />
-              <p className="text-xs text-gray-500 mt-1">At least 6 characters</p>
+              <p className="text-xs text-black font-bold mt-1 uppercase">At least 6 characters</p>
             </div>
 
             <button
               type="submit"
-              className="w-full bg-[#35553D] text-white px-6 py-3 rounded-xl font-medium hover:bg-[#2a4430] transition-all shadow-sm"
+              className="w-full bg-[#00F5FF] text-black px-6 py-4 neobrutal-border neobrutal-shadow font-bold hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all uppercase"
             >
               Create account
             </button>
           </form>
 
           <div className="text-center text-sm">
-            <span className="text-gray-500">Already have an account? </span>
+            <span className="text-black font-bold">Already have an account? </span>
             <Link
               href="/login"
-              className="font-medium text-[#35553D] hover:text-[#2a4430] transition-colors"
+              className="font-bold text-black bg-white px-3 py-1 neobrutal-border neobrutal-shadow-sm hover:bg-[#00F5FF] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all uppercase"
             >
               Sign in
             </Link>

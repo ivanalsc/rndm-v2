@@ -75,21 +75,21 @@ export default async function FeedPage({
   const hasFilters = params.search || params.type
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-4xl font-bold font-grotesk text-black mb-8 tracking-tight">
-        Feed
+    <div className="max-w-4xl mx-auto px-4 py-8">
+      <h1 className="text-5xl font-bold font-grotesk text-black mb-8 tracking-tight neobrutal-border bg-white px-6 py-4 inline-block neobrutal-shadow">
+        FEED
       </h1>
       
       <SearchFilters />
       
       {!entriesWithInteractions || entriesWithInteractions.length === 0 ? (
-        <div className="text-center py-24">
-          <p className="text-gray-400 text-sm">
+        <div className="text-center neobrutal-border bg-white px-8 py-12 neobrutal-shadow">
+          <p className="text-black font-bold text-lg">
             {hasFilters ? 'No entries found with these filters' : 'No public entries yet'}
           </p>
         </div>
       ) : (
-        <div className="space-y-8">
+        <div className="space-y-6">
           {entriesWithInteractions.map((entry) => (
             <FeedEntry 
               key={entry.id}
